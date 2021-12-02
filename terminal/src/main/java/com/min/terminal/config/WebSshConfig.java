@@ -1,6 +1,7 @@
 package com.min.terminal.config;
 
 import com.min.terminal.filter.WebSocketHandshakeInterceptor;
+import com.min.terminal.handle.ContainerExecHandler;
 import com.min.terminal.handle.SocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +19,12 @@ public class WebSshConfig implements WebSocketConfigurer {
 
     @Autowired
     private SocketHandler socketHandler;
+    @Autowired
+    private ContainerExecHandler containerExecHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(socketHandler, "/stomp/websocketJS")
+        registry.addHandler(containerExecHandler, "/stomp/websocketJS")
                 .addInterceptors(new WebSocketHandshakeInterceptor())
                 .setAllowedOriginPatterns("*")
                 .withSockJS();

@@ -11,13 +11,14 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 @Component
 public class SocketHandler extends DefaultHandshakeHandler implements WebSocketHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
+
     @Autowired
     private WebSocketService webSocketService;
-    private Logger logger = LoggerFactory.getLogger(SocketHandler.class);
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session){
-        logger.info("连接WebSSH");
+        logger.info("初始化连接");
         //调用初始化连接
         webSocketService.initConnection(session);
     }
@@ -45,7 +46,7 @@ public class SocketHandler extends DefaultHandshakeHandler implements WebSocketH
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus){
-        logger.info("断开WebSSH连接");
+        logger.info("断开连接");
         //调用service关闭连接
         webSocketService.close(session);
     }

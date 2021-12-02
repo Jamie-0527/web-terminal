@@ -17,7 +17,7 @@ import { FitAddon } from 'xterm-addon-fit'
 import { AttachAddon } from 'xterm-addon-attach'
 
 export default {
-  name: "terminal-docker",
+  name: "docker-attach",
   data() {
     return {
       containerId: this.$route.query.containerId,

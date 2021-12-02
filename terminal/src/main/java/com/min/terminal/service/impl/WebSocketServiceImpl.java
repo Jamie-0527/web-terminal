@@ -31,7 +31,7 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     private static Map<String, Object> sshMap = new ConcurrentHashMap<>();
 
-    private Logger logger = LoggerFactory.getLogger(WebSocketServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(WebSocketServiceImpl.class);
 
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -72,7 +72,7 @@ public class WebSocketServiceImpl implements WebSocketService {
                         //连接到终端
                         connectToSSH(connectInfo, webSSHData, session);
                     } catch (JSchException | IOException e) {
-                        logger.error("webssh连接异常");
+                        logger.error("ssh连接异常");
                         logger.error("异常信息:{}", e.getMessage());
                         close(session);
                     }
@@ -87,7 +87,7 @@ public class WebSocketServiceImpl implements WebSocketService {
                     //发送命令到终端
                     transToSSH(connectInfo.getChannel(), command);
                 } catch (IOException e) {
-                    logger.error("webssh连接异常");
+                    logger.error("ssh连接异常");
                     logger.error("异常信息:{}", e.getMessage());
                     close(session);
                 }
@@ -122,7 +122,7 @@ public class WebSocketServiceImpl implements WebSocketService {
      * 使用jsch连接终端
      */
     private void connectToSSH(ConnectInfo connectInfo, WebSSHData webSSHData, WebSocketSession webSocketSession) throws JSchException, IOException {
-        Session session = null;
+        Session session;
         Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");
         //获取jsch的会话
@@ -176,5 +176,9 @@ public class WebSocketServiceImpl implements WebSocketService {
             outputStream.write(command.getBytes());
             outputStream.flush();
         }
+    }
+
+    private void connectToContainer() {
+
     }
 }

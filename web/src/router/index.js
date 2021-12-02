@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Shell from '@/components/terminal-web'
-import Docker from '@/components/terminal-docker'
+import DockerAttach from '@/components/docker-attach'
+import DockerExec from '@/components/docker-exec'
 
 Vue.use(Router)
 
@@ -12,9 +13,13 @@ export default new Router({
       name: 'Shell',
       component: Shell
     },{
-      path: '/docker',
-      name: 'Docker',
-      component: Docker
+      path: '/docker/attach',
+      name: 'DockerAttach',
+      component: DockerAttach
+    },{
+      path: '/docker/exec',
+      name: 'DockerExec',
+      component: DockerExec
     },
   ]
 })
