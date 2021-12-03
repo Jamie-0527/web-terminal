@@ -34,21 +34,14 @@ public class WebSocketHandshakeInterceptor extends HttpSessionHandshakeIntercept
             logger.info("httpSession key：" + httpSession.getId());
             httpSession.setAttribute(Constants.USER_KEY, httpSession.getId());
 
-            // 获取到httpsession后，可以根据自身业务，操作其中的信息，这里只是单纯的和websocket进行关联
-            attributes.put("HTTP_SESSION", httpSession);
-//
-//            if (request.getHeaders().containsKey("Sec-WebSocket-Extensions")) {
-//                request.getHeaders().set("Sec-WebSocket-Extensions", "permessage-deflate");
-//            }
-            String ip = ((ServletServerHttpRequest) request).getServletRequest().getParameter("ip");
+            // 设置连接标志
+            attributes.put(Constants.CONTAINER_EXEC, false);
+
             String containerId = ((ServletServerHttpRequest) request).getServletRequest().getParameter("containerId");
-            String width = ((ServletServerHttpRequest) request).getServletRequest().getParameter("width");
-            String height = ((ServletServerHttpRequest) request).getServletRequest().getParameter("height");
-            if (StringUtils.isNotBlank(ip) && StringUtils.isNotBlank(containerId)){
-                attributes.put(Constants.IP, ip);
+
+            if (StringUtils.isNotBlank(containerId)){
                 attributes.put(Constants.CONTAINER_ID, containerId);
-                attributes.put(Constants.WIDTH, width);
-                attributes.put(Constants.HEIGHT, height);
+                attributes.put(Constants.CONTAINER_EXEC, true);
             }
         }
 

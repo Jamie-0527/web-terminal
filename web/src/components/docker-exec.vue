@@ -1,22 +1,29 @@
 <template>
   <div class="window">
     <div class="header"></div>
-    <div id="terminal" class="terminal"></div>
+    <div id="terminal" class="terminal"/>
   </div>
 </template>
 <!--
   仅供学习参考
+  以 exec -it 的方式进入容器
 -->
 
 <script>
 import 'xterm/css/xterm.css'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
-import { AttachAddon } from 'xterm-addon-attach'
 import SockJS from "sockjs-client";
 
 export default {
   name: "docker-exec",
+  mounted() {
+    this.initTerm();
+  },
+  beforeDestroy() {
+    this.socket.close();
+    this.term.dispose();
+  },
   data() {
     return {
       containerId: this.$route.query.containerId,
@@ -24,23 +31,9 @@ export default {
       socket: null,
     }
   },
-  mounted() {
-    this.initTerm()
-  },
-  beforeDestroy() {
-    this.socket.close()
-    this.term.dispose()
-  },
   methods: {
     //初始化Xterm
     initTerm() {
-      /*
-      * 此处访问连接的由来请看以下两个链接中的文档
-      * https://docs.docker.com/engine/api/v1.41/#operation/ContainerAttachWebsocket
-      * https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-socket-option
-      * 注意：记得开启目标主机的防火墙端口
-      * */
-      let url = 'http://localhost:8080/stomp/websocketJS?width=100&height=50&ip=192.168.127.128&containerId=2543842e5824b8b4a094575475a4cb339ae5c22d57a68559ce73f6a1568f8610';
       const term = new Terminal({
         cursorBlink: true, // 光标闪烁
         cursorStyle: "block", // 光标样式 null | 'block' | 'underline' | 'bar'
@@ -53,25 +46,30 @@ export default {
         theme: {
           foreground: "#24cc3d"
         },
+
       });
       const fitAddon = new FitAddon();
-      const socket = new SockJS(url)
-      const attachAddon = new AttachAddon(socket)
       term.loadAddon(fitAddon);
-      term.loadAddon(attachAddon);
       term.open(document.getElementById('terminal'));
       fitAddon.fit();
       term.focus();
       // 窗口尺寸变化时，终端尺寸自适应
-      window.onresize = function() {
+      window.onresize = function () {
         fitAddon.fit()
       }
       this.term = term;
-      this.socket = socket;
       this.initSocket();
     },
     //初始化websocket
     initSocket() {
+      let url = `http://localhost:8080/stomp/websocketJS?containerId=${this.containerId}`;
+      if (window.WebSocket) {
+        // 创建WebSocket对象
+        this.socket = new SockJS(url)
+      } else {
+        this.term.write('Error: WebSocket Not Supported\r\n');//否则报错
+        return;
+      }
       this.socketOnOpen();
       this.socketOnMessage();
       this.socketOnClose();
@@ -79,15 +77,21 @@ export default {
     },
     socketOnOpen() {
       this.socket.onopen = () => {
-        this.term.write('Connecting...\r');
-        this.socket.send('\n');
+
+        this.term.write('Connecting...\r\n');
+        this.socket.send(JSON.stringify({operate: 'connect'}));
+        // 监听键盘输入
+        this.term.onData((data) => {
+          //发送指令
+          this.socket.send(JSON.stringify({"operate": "command", "command": data}));
+        });
       }
     },
     // 回显字符
     socketOnMessage() {
       let _this = this;
       this.socket.onmessage = (evt) => {
-        let data = evt.data;
+        let data = evt.data.toString();
         _this.term.write(data);
       }
     },
@@ -106,11 +110,13 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 * {
   margin: 0;
   padding: 0;
 }
+
 .window {
   width: 1000px;
   margin: 0 auto;

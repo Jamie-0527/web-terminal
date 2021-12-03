@@ -177,8 +177,4 @@ public class WebSocketServiceImpl implements WebSocketService {
             outputStream.flush();
         }
     }
-
-    private void connectToContainer() {
-
-    }
 }
