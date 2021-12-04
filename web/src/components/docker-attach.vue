@@ -1,7 +1,11 @@
 <template>
-  <div class="window">
-    <div class="header"></div>
-    <div id="terminal" class="terminal"></div>
+  <div class="father">
+    <vue-drag-resize :is-resizable="false">
+      <div class="window">
+        <div class="header"></div>
+        <div id="terminal" class="terminal"/>
+      </div>
+    </vue-drag-resize>
   </div>
 </template>
 <!--
@@ -15,6 +19,7 @@ import 'xterm/css/xterm.css'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { AttachAddon } from 'xterm-addon-attach'
+import VueDragResize from 'vue-drag-resize'
 
 export default {
   name: "docker-attach",
@@ -24,6 +29,9 @@ export default {
       term: null,
       socket: null,
     }
+  },
+  components: {
+    VueDragResize
   },
   mounted() {
     this.initTerm()

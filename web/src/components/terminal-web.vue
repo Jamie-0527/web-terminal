@@ -1,14 +1,20 @@
 <template>
-  <div>
-    <terminal :host-info="hostInfo"></terminal>
+  <div class="father">
+    <VueDragResize :is-resizable="false">
+      <terminal :host-info="hostInfo"/>
+    </VueDragResize>
   </div>
 </template>
 
 <script>
 import terminal from './terminal'
+import VueDragResize from 'vue-drag-resize'
 export default {
   name: "test",
-  components: {terminal},
+  components: {
+    terminal,
+    VueDragResize
+  },
   data() {
     return {
       hostInfo: {

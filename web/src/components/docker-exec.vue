@@ -1,7 +1,11 @@
 <template>
-  <div class="window">
-    <div class="header"></div>
-    <div id="terminal" class="terminal"/>
+  <div class="father">
+    <vue-drag-resize :is-resizable="false">
+      <div class="window">
+        <div class="header"></div>
+        <div id="terminal" class="terminal"/>
+      </div>
+    </vue-drag-resize>
   </div>
 </template>
 <!--
@@ -14,9 +18,13 @@ import 'xterm/css/xterm.css'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import SockJS from "sockjs-client";
+import VueDragResize from 'vue-drag-resize'
 
 export default {
   name: "docker-exec",
+  components: {
+    VueDragResize
+  },
   mounted() {
     this.initTerm();
   },
