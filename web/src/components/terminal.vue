@@ -1,7 +1,7 @@
 <template>
-  <div class="window">
+  <div class="window" ref="contain">
     <div class="header"></div>
-    <div id="xterm" class="xterm"/>
+    <div id="xterm" class="xterm" ref="xterm"/>
   </div>
 </template>
 
@@ -17,7 +17,25 @@ export default {
     // 终端信息
     hostInfo: {type: Object},
   },
+  watch: {
+    'hostInfo.width': {
+      handler(value) {
+        this.$refs.contain.style.width = null
+        this.$refs.contain.style.width = value
+        this.fitAddon.fit()
+      },
+    },
+    'hostInfo.height': {
+      handler(value) {
+        this.$refs.contain.style.height = null
+        this.$refs.contain.style.height = value
+        this.fitAddon.fit()
+      },
+    },
+  },
   mounted() {
+    this.$refs.contain.style.width = '200px'
+    this.$refs.contain.style.height = '700px'
     this.initTerm();
   },
   beforeDestroy() {
@@ -28,6 +46,7 @@ export default {
     return {
       term: null,
       socket: null,
+      fitAddon: null,
     }
   },
   methods: {
@@ -47,15 +66,12 @@ export default {
         },
 
       });
-      const fitAddon = new FitAddon();
-      term.loadAddon(fitAddon);
+      this.fitAddon = new FitAddon();
+      this.fitAddon.activate(term)
+      term.loadAddon(this.fitAddon);
       term.open(document.getElementById('xterm'));
-      fitAddon.fit();
+      this.fitAddon.fit();
       term.focus();
-      // 窗口尺寸变化时，终端尺寸自适应
-      window.onresize = function() {
-        fitAddon.fit()
-      }
       this.term = term;
       this.initSocket();
     },
@@ -121,16 +137,12 @@ export default {
   margin: 0;
   padding: 0;
 }
-.window {
-  width: 1000px;
-  margin: 0 auto;
-}
 
 .header {
   background-color: #E0E0E0;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  padding: 10px;
+  padding: 20px;
 }
 
 .header::before {
@@ -141,12 +153,10 @@ export default {
   border-radius: 50%;
   background-color: #fd6458;
   box-shadow: 20px 0 0 #ffbf2b, 40px 0 0 #24cc3d;
-  margin-left: -950px;
+  float: left;
 }
 
 .window .xterm {
-  width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
   background-color: #F5F5F5;

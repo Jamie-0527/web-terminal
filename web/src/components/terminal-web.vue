@@ -1,6 +1,11 @@
 <template>
   <div class="father">
-    <VueDragResize :is-resizable="false">
+    <VueDragResize
+      :w="200"
+      :h="700"
+      @resizing="handleResizing"
+      :resizable="true"
+    >
       <terminal :host-info="hostInfo"/>
     </VueDragResize>
   </div>
@@ -18,11 +23,19 @@ export default {
   data() {
     return {
       hostInfo: {
-        host: '192.168.127.128',//IP
-        port: '22',//端口号
-        username: 'jamie',//用户名
-        password: 'root'//密码
+        host: '192.168.127.132',
+        port: '22',
+        username: 'jamie',
+        password: 'root',
+        height: 700,
+        width: 900,
       }
+    }
+  },
+  methods: {
+    handleResizing(newRect) {
+      this.hostInfo.height = newRect.height
+      this.hostInfo.width = newRect.width
     }
   }
 }
