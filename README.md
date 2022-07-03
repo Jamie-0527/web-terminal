@@ -1,6 +1,6 @@
 # web-terminal
 
-> This is a simple web-termianl with Java-WebSocket-xterm to connect the unix, and has a vue component connect the docker containers，Due to the use of attach connection mode, it has great limitations and is only used for learning reference.
+> 这是一个简单的用Java-WebSocket-xterm连接unix的web终端，还能通过vue组件与docker容器建立连接，由于使用的是附加连接模式，它有很大的局限性，仅供学习参考。
 
 ## Build Setup
 
