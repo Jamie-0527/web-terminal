@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: terminal
+
+# 目标主机的 ip地址和端口
+docker:
+  connect:
+    host: 192.168.127.128
+    port: 2375
+
